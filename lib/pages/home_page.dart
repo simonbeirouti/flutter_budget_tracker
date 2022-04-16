@@ -1,21 +1,17 @@
+import 'package:budget_tracker/services/budget_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:budget_tracker/model/transaction_item.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  List<TransactionItem> items = [];
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final budgetService = Provider.of<BudgetService>(context);
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -25,9 +21,9 @@ class _HomePageState extends State<HomePage> {
               builder: (context) {
                 return AddTransactionDialog(
                   itemToAdd: (transactionItem) {
-                    setState(() {
-                      items.add(transactionItem);
-                    });
+                    final budgetService =
+                        Provider.of<BudgetService>(context, listen: false);
+                    budgetService.addItems(transactionItem);
                   },
                 );
               });
@@ -44,30 +40,38 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Align(
                   alignment: Alignment.topCenter,
-                  child: CircularPercentIndicator(
-                    radius: screenSize.width / 2,
-                    backgroundColor: Colors.white,
-                    lineWidth: 10.0,
-                    percent: 1.0,
-                    center: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text(
-                          "\$0",
-                          style: TextStyle(
-                            fontSize: 48.0,
-                            fontWeight: FontWeight.bold,
-                          ),
+                  child: Consumer<BudgetService>(
+                    builder: ((context, value, child) {
+                      return CircularPercentIndicator(
+                        radius: screenSize.width / 2,
+                        backgroundColor: Colors.white,
+                        lineWidth: 10.0,
+                        percent: value.balance / value.balance,
+                        center: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "\$" + value.balance.toString().split(".")[0],
+                              style: const TextStyle(
+                                fontSize: 48.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Text(
+                              "Balance",
+                              style: TextStyle(
+                                fontSize: 18.0,
+                              ),
+                            ),
+                            Text(
+                              "Budget: \$" + budgetService.budget.toString(),
+                              style: const TextStyle(fontSize: 10),
+                            ),
+                          ],
                         ),
-                        Text(
-                          "Balance",
-                          style: TextStyle(
-                            fontSize: 18.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                    progressColor: Theme.of(context).colorScheme.primary,
+                        progressColor: Theme.of(context).colorScheme.primary,
+                      );
+                    }),
                   ),
                 ),
                 const SizedBox(height: 35.0),
@@ -77,12 +81,19 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 10.0),
                 // Add to the existing list of items
-                ...List.generate(
-                  items.length,
-                  // Build the list using the TransactionCard widget
-                  (index) => TransactionCard(
-                    item: items[index],
-                  ),
+                Consumer<BudgetService>(
+                  builder: ((context, value, child) {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: value.items.length,
+                      physics: const ClampingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return TransactionCard(
+                          item: value.items[index],
+                        );
+                      },
+                    );
+                  }),
                 ),
               ],
             ),
