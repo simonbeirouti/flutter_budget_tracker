@@ -7,6 +7,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Center(
       child: Text("Profile Page"),
+      // Will put the budget setter and theme here
     );
   }
 }
