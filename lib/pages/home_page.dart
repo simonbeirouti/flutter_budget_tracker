@@ -1,4 +1,4 @@
-import 'package:budget_tracker/services/budget_service.dart';
+import 'package:budget_tracker/view_models/budget_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final budgetService = Provider.of<BudgetService>(context);
+    final budgetService = Provider.of<BudgetViewModel>(context);
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
                 return AddTransactionDialog(
                   itemToAdd: (transactionItem) {
                     final budgetService =
-                        Provider.of<BudgetService>(context, listen: false);
+                        Provider.of<BudgetViewModel>(context, listen: false);
                     budgetService.addItems(transactionItem);
                   },
                 );
@@ -40,7 +40,7 @@ class HomePage extends StatelessWidget {
               children: [
                 Align(
                   alignment: Alignment.topCenter,
-                  child: Consumer<BudgetService>(
+                  child: Consumer<BudgetViewModel>(
                     builder: ((context, value, child) {
                       return CircularPercentIndicator(
                         radius: screenSize.width / 2,
@@ -81,7 +81,7 @@ class HomePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 10.0),
                 // Add to the existing list of items
-                Consumer<BudgetService>(
+                Consumer<BudgetViewModel>(
                   builder: ((context, value, child) {
                     return ListView.builder(
                       shrinkWrap: true,
