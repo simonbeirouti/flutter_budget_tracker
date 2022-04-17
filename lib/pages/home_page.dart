@@ -11,7 +11,6 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final budgetService = Provider.of<BudgetViewModel>(context);
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -21,9 +20,9 @@ class HomePage extends StatelessWidget {
               builder: (context) {
                 return AddTransactionDialog(
                   itemToAdd: (transactionItem) {
-                    final budgetService =
+                    final budgetViewModel =
                         Provider.of<BudgetViewModel>(context, listen: false);
-                    budgetService.addItems(transactionItem);
+                    budgetViewModel.addItem(transactionItem);
                   },
                 );
               });
@@ -42,16 +41,27 @@ class HomePage extends StatelessWidget {
                   alignment: Alignment.topCenter,
                   child: Consumer<BudgetViewModel>(
                     builder: ((context, value, child) {
+                      final balance = value.getBalance();
+                      final budget = value.getBudget();
+                      double percentage = balance / budget;
+
+                      if (percentage < 0) {
+                        percentage = 0;
+                      }
+                      if (percentage > 1) {
+                        percentage = 1;
+                      }
+
                       return CircularPercentIndicator(
                         radius: screenSize.width / 2,
                         backgroundColor: Colors.white,
                         lineWidth: 10.0,
-                        percent: value.balance / value.balance,
+                        percent: percentage,
                         center: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "\$" + value.balance.toString().split(".")[0],
+                              "\$" + balance.toString().split(".")[0],
                               style: const TextStyle(
                                 fontSize: 48.0,
                                 fontWeight: FontWeight.bold,
@@ -64,7 +74,7 @@ class HomePage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              "Budget: \$" + budgetService.budget.toString(),
+                              "Budget: \$" + budget.toString(),
                               style: const TextStyle(fontSize: 10),
                             ),
                           ],
