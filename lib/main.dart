@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
       child: Builder(builder: (context) {
         final themeService = Provider.of<ThemeService>(context);
         return MaterialApp(
+          debugShowCheckedModeBanner: false,
           title: 'Budget Tracker',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
