@@ -1,16 +1,17 @@
 # budget_tracker
 
-A new Flutter project.
+Learning how to implement a package into a flutter app, implementing a theme and then using hive to store data locally
 
-## Getting Started
+## Tools used
 
-This project is a starting point for a Flutter application.
+It is using provider for statemanagement and hive for local storage
 
-A few resources to get you started if this is your first Flutter project:
+## Screenshots
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+| Dark mode | Light mode |
+| ----------- | ----------- |
+| ![Dark mode](./assets/README/darkMode.png) | ![Light mode](./assets/README/lightMode.png) |
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+| Set budget | Add expense |
+| ----------- | ----------- |
+| ![Set budget](./assets/README/setBudget.png) | ![Add expense](./assets/README/addExpense.png) |
